@@ -13,16 +13,27 @@ const movieList = require('./movies.json')
 app.use(express.static('public'))
 
 // Setting route
+// Home page
 app.get('/', (req, res) => {
   // Past the movie data into 'index' partial template
   res.render(`index`, { movies: movieList.results })
 })
 
+// Show page
 app.get('/movies/:movie_id', (req, res) => {
   const movie = movieList.results.find(movie =>
     movie.id.toString() === req.params.movie_id
   )
   res.render('show', { movie: movie })
+})
+
+// Search page
+app.get(`/search`, (req, res) => {
+  const keyword = req.query.keyword
+  const movies = movieList.results.filter(movie => {
+    return movie.title.toLowerCase().includes(keyword.toLowerCase())
+  })
+  res.render(`index`, { movies: movies, keyword: keyword })
 })
 
 // Start and listen on the Express server
